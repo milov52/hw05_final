@@ -139,12 +139,12 @@ class FollowViewsTest(BaseTestCase):
         follow_count = Follow.objects.count()
         redirect_url = self.profile_url
 
-        response = self.authorized_client.get(self.profile_follow_url)
+        response = self.auth_other_user.get(self.profile_follow_url)
 
         self.assertRedirects(response, redirect_url)
         self.assertEqual(Follow.objects.count(), follow_count + 1)
 
-        response = self.authorized_client.get(self.profile_unfollow_url)
+        response = self.auth_other_user.get(self.profile_unfollow_url)
         self.assertRedirects(response, redirect_url)
         self.assertEqual(Follow.objects.count(), follow_count)
 
