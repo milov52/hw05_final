@@ -149,6 +149,7 @@ class FollowViewsTest(BaseTestCase):
         self.assertEqual(Follow.objects.count(), follow_count)
 
     def assertFollow(self):
+
         response = self.authorized_client.get(self.follow_index_url)
         content_count = len(response.context["page_obj"])
         self.assertEqual(content_count, Follow.objects.count())
