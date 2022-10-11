@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load cache %}
+{% block title %} Вы подписаны {% endblock %}
+{% block content %}
+{#  {% cache 20 index_page %}#}
+    <div class="container py-5">
+      {% include "includes/switcher.html" %}
+      {% include 'includes/post_list.html' %}
+      {% include 'includes/paginator.html' %}
+    </div>
+{#  {% endcache %}#}
+{% endblock %}
+
