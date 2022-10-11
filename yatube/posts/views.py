@@ -27,8 +27,8 @@ def profile(request, username):
     posts = author.posts
     following = False
     if (
-            request.user.is_authenticated
-            and Post.objects.filter(author__following__user=request.user).exists()
+        request.user.is_authenticated
+        and Post.objects.filter(author__following__user=request.user).exists()
     ):
         following = True
 
@@ -107,9 +107,7 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    follower_list = Follow.objects.filter(
-        user=request.user, author=author
-    )
+    follower_list = Follow.objects.filter(user=request.user, author=author)
 
     if follower_list.exists() or request.user == author:
         return redirect("posts:index")
@@ -122,9 +120,7 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
 
-    following_list = Follow.objects.filter(
-        user=request.user, author=author
-    )
+    following_list = Follow.objects.filter(user=request.user, author=author)
 
     if not following_list.exists():
         redirect("posts:index")
