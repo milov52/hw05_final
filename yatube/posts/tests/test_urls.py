@@ -44,6 +44,11 @@ class PostURLsTests(BaseTestCase):
             reverse("posts:post_detail", kwargs={"post_id": self.post.pk}),
         )
 
+    def test_unexisting_page_for_auth_users(self):
+        """Не существующая страница отображает код HTTP 404."""
+        response = self.authorized_client.get('/unexisting_page/')
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
     def test_static_page_urls_at_desired_location(self):
         """Доступность статичных страниц"""
         static_page_urls = ["/about/author/", "/about/tech/"]
