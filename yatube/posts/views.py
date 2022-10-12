@@ -28,7 +28,7 @@ def profile(request, username):
     following = False
     if (
         request.user.is_authenticated
-        and Follow.objects.filter(user=request.user1, author=author).exists()
+        and Follow.objects.filter(user=request.user, author=author).exists()
     ):
         following = True
 
