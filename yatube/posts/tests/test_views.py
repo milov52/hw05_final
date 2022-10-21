@@ -15,7 +15,6 @@ class PostViewsTest(BaseTestCase):
         self.assertEqual(first_page.text, self.post.text)
         self.assertEqual(first_page.author, self.user)
         self.assertEqual(first_page.group.slug, self.group.slug)
-        # self.assertEqual(first_page.image, "posts/small.gif")
         self.assertEqual(
             first_page.image, f"{PostsConfig.name}/{self.uploaded.name}"
         )
