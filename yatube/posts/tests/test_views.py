@@ -100,39 +100,36 @@ class PostViewsTest(BaseTestCase):
         self.assertNotEqual(response, response_clear)
 
 
-class PaginatorViewsTest(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-
-        cls.group = Group.objects.create(
-            title="Тестовая группа",
-            slug="test-slug",
-            description="Тестовое описание",
-        )
-
-        cls.user = User.objects.create_user(username="auth")
-
+class PaginatorViewsTest(BaseTestCase):
+    def test_paginator_views(self):
         Post.objects.bulk_create(
             [
                 Post(
-                    author=cls.user, text=f"Тестовый пост {i}", group=cls.group
+                    author=self.user,
+                    text=f"Тестовый пост {i}",
+                    group=self.group,
                 )
                 for i in range(settings.POST_ON_PAGE + 3)
             ]
         )
 
-    def test_first_page_contains_ten_record(self):
-        """Тестирование паджинатора - 1 страница"""
-        response = self.client.get(reverse("posts:index"))
-        self.assertEqual(
-            len(response.context["page_obj"]), settings.POST_ON_PAGE
-        )
+        second_page = "?page=2"
+        records_on_first_page = settings.POST_ON_PAGE
+        records_on_second_page = Post.objects.count() - records_on_first_page
 
-    def test_second_page_contains_ten_record(self):
-        """Тестирование паджинатора - 2 страница"""
-        response = self.client.get(reverse("posts:index") + "?page=2")
-        self.assertEqual(len(response.context["page_obj"]), 3)
+        template_paginator = [
+            (self.index_url, records_on_first_page),
+            (self.index_url + second_page, records_on_second_page),
+            (self.group_url, settings.POST_ON_PAGE),
+            (self.group_url + second_page, records_on_second_page),
+        ]
+
+        for (page, count_pages) in template_paginator:
+            with self.subTest(page=page):
+                response = self.client.get(page)
+                self.assertEqual(
+                    len(response.context["page_obj"]), count_pages
+                )
 
 
 class FollowViewsTest(BaseTestCase):
@@ -152,7 +149,6 @@ class FollowViewsTest(BaseTestCase):
         self.assertEqual(Follow.objects.count(), follow_count)
 
     def assertFollow(self):
-
         response = self.authorized_client.get(self.follow_index_url)
         content_count = len(response.context["page_obj"])
         self.assertEqual(content_count, Follow.objects.count())

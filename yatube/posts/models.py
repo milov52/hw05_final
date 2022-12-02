@@ -13,6 +13,11 @@ class Group(models.Model):
     def __str__(self):
         return self.title
 
+class Tag(models.Model):
+    name = models.CharField(max_length=32)
+
+    def __str__(self):
+        return self.name
 
 class Post(models.Model):
     text = models.TextField("Текст поста", help_text="Введите текст поста")
@@ -33,6 +38,7 @@ class Post(models.Model):
         help_text="Группа, к которой будет относиться пост",
     )
     image = models.ImageField("Картинка", upload_to="posts/", blank=True)
+    tag = models.ManyToManyField(Tag, through='TagPost')
 
     def __str__(self):
         return self.text[: settings.CHAR_IN_WORD]
@@ -75,3 +81,10 @@ class Follow(models.Model):
         verbose_name="Автор",
         related_name="following",
     )
+
+class TagPost(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.tag} {self.post}'

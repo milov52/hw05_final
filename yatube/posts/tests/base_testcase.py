@@ -36,6 +36,12 @@ class BaseTestCase(TestCase):
             description="Тестовое описание",
         )
 
+        cls.group2 = Group.objects.create(
+            title="Группа",
+            slug="test-slug2",
+            description="Тестовое описание2",
+        )
+
         cls.post = Post.objects.create(
             author=cls.user,
             text="Тестовый пост",

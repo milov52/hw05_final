@@ -67,17 +67,23 @@ class PostFormTest(BaseTestCase):
         update_text = "Измененный текст"
         self.form_data["text"] = update_text
 
+        redirect_url = reverse(
+            "posts:post_detail", kwargs={"post_id": self.post.pk}
+        )
+
         response = self.authorized_client.post(
             reverse("posts:post_edit", kwargs={"post_id": self.post.pk}),
             data=self.form_data,
             follow=True,
         )
 
+        self.assertRedirects(response, redirect_url)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.post.refresh_from_db()
         self.assertEqual(self.post.text, update_text)
+        self.assertEqual(self.post.author, self.form_data["author"])
 
-    def test_post_edit_form_anonumis(self):
+    def test_post_edit_form_anonimus(self):
         """
         У анонимного пользователя нет прав на редактирование записи
         Происходит редирект, текст поста не меняется.
